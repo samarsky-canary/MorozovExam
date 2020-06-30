@@ -1,0 +1,23 @@
+﻿@using Microsoft.EntityFrameworkCore
+
+<select @onchange="@OnChangeGroup">
+    @foreach (var group in Groups)
+    {
+        <option value=@group.Id>@group.Name</option>
+    }
+</select>
+
+@code 
+{
+    [Parameter]
+    public EventCallback<int?> OnChangeGroupCallback { get; set; }
+    [Parameter]
+    public DbSet<Group> Groups { get; set; }
+    
+    // Set GroupID
+    private void OnChangeGroup(ChangeEventArgs e)
+    {
+        OnChangeGroupCallback.InvokeAsync(Convert.ToInt32(e.Value));
+    }
+
+}

@@ -1,0 +1,5 @@
+﻿terminal call:
+dotnet ef dbcontext scaffold "Host=localhost;Port=5432;Database=students;Username=postgres;Password=2233;" Npgsql.EntityFrameworkCore.PostgreSQL
+required packages:
+EntityFrameworkCore.Design
+Npgsql.EntityFrameworkCore.PostgreSQL

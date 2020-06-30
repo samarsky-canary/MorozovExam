@@ -1,0 +1,49 @@
+﻿@page "/";
+@inject studentsContext DbContextStudents;
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.WebUtilities @*for QueryHelpers*@
+
+<h3>Students List</h3>
+
+<SelectGroup OnChangeGroupCallback="@UpdateCategory" Groups="@DbContextStudents.Groups"/>
+<TableStudents db="@DbContextStudents" GroupID="@GroupID"/> 
+
+<div class="add-item-component">
+    <input type="text" placeholder="Gradebook number"       @bind="NewStudent.GradebookNumber"/>
+    <input type="text" placeholder="Name"                   @bind="NewStudent.Name"/>
+    <input type="text" placeholder="Second name"            @bind="NewStudent.Secondname"/>
+    <input type="text" placeholder="Third name (if exists)" @bind="NewStudent.Thirdname"/>
+    <button class="btn btn-primary" @onclick=IncludeStudent>Add student</button>
+</div>
+
+@code
+{
+    private string errorOnAddMessage = "Check Gradebook number and full name";
+    private Student NewStudent { get; set; }
+    private int GroupID { get; set; }
+
+    // Set category to Select table child component which sends callbacks
+    private void UpdateCategory(int? group)
+    {
+        GroupID = Convert.ToInt32(group);
+    }
+    // Add to Dbset and flush fields
+    private async Task  IncludeStudent()
+    {
+        NewStudent.IdGroup = GroupID;
+        if (!DbContextStudents.IncludeStudent(NewStudent))
+            await JsRuntime.InvokeAsync<string>("alert", errorOnAddMessage);
+    
+        NewStudent = new Student();
+    }
+
+    //TODO: try to add onrefresh page sending url's query parameters
+    protected override void OnInitialized()
+    {
+        NewStudent = new Student();
+        var uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
+        GroupID = (QueryHelpers.ParseQuery(uri.Query).TryGetValue("Group", out var token)) ?
+            GroupID = Convert.ToInt32(token.First()) : 1;
+    }
+}

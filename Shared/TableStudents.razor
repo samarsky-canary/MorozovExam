@@ -1,0 +1,24 @@
+﻿<table>
+    @{
+        var students = db.Students.Where(student => student.IdGroup == GroupID).OrderBy(item => item.GradebookNumber);
+        foreach (var student in students)
+        {
+            <tr>
+                <td>@student.GradebookNumber</td>
+                <td><input @bind="student.Name"/></td>
+                <td><input @bind="student.Secondname"/></td>
+                <td><input @bind="student.Thirdname"/></td>
+                <button class="btn btn-exit" @onclick="@(()=> db.ExcludeStudent(student))">X</button>
+            </tr>
+        }
+        db.SaveChangesAsync();
+    }
+</table>
+
+@code
+{
+    [Parameter] 
+    public studentsContext db { get; set;}
+    [Parameter]
+    public int? GroupID { get; set; }
+}

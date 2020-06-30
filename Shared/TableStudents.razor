@@ -11,6 +11,7 @@
                 <button class="btn btn-exit" @onclick="@(()=> db.ExcludeStudent(student))">X</button>
             </tr>
         }
+        //Dynamically update Changes
         db.SaveChangesAsync();
     }
 </table>

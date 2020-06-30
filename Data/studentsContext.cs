@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -14,13 +15,16 @@ namespace BlazorExam.Data
 
         public bool IncludeStudent(Student student)
         {
-            int foo;
-            if (string.IsNullOrEmpty(student.Name) || 
+            if (
+                string.IsNullOrEmpty(student.Name) || 
                 string.IsNullOrEmpty(student.Secondname) ||
                 // Not 8-length number
                 student.GradebookNumber.Length != 8 ||
                 // Or it's not even a number
-                !int.TryParse(student.GradebookNumber, out foo))
+                !int.TryParse(student.GradebookNumber, out _) ||
+                // Or unique key constraint violated
+                Students.Any(existed => existed.GradebookNumber == student.GradebookNumber)
+                )
                 return false;
             
             Students.Add(student);
